@@ -28,14 +28,35 @@ router.get('/', async (req: AuthRequest, res: Response) => {
       avg_interest_rate: avgRate,
     };
 
-    const mlRes = await axios.post(`${ML_URL}/health-score`, payload);
+    // ── Try ML service with 3s timeout, fall back to local formula ──
+    let scoreData: any;
+    try {
+      const mlRes = await axios.post(`${ML_URL}/health-score`, payload, { timeout: 3000 });
+      scoreData = mlRes.data;
+      // Save to history only if ML responded
+      await prisma.healthScoreHistory.create({
+        data: { userId, score: scoreData.score, band: scoreData.band },
+      });
+    } catch {
+      // Local fallback — simple weighted formula
+      const dti   = payload.debt_to_income_ratio;
+      const emiR  = payload.emi_to_income_ratio;
+      const rate  = Math.min(avgRate / 40, 1);
+      const rawScore = Math.max(0, Math.round(100 - dti * 40 - emiR * 30 - rate * 30));
+      const band =
+        rawScore >= 80 ? 'Excellent' :
+        rawScore >= 60 ? 'Good' :
+        rawScore >= 40 ? 'Fair' : 'Poor';
+      const insights = [
+        dti > 0.5 ? 'Your debt-to-income ratio is high — consider reducing principal.' : '',
+        emiR > 0.4 ? 'EMI is over 40% of income — try to consolidate loans.' : '',
+        avgRate > 18 ? 'High interest rates detected — look into balance transfer options.' : '',
+        debts.length === 0 ? 'Add your debt accounts to get a personalised ML health score.' : '',
+      ].filter(Boolean);
+      scoreData = { score: rawScore, band, insights };
+    }
 
-    // Save to history
-    await prisma.healthScoreHistory.create({
-      data: { userId, score: mlRes.data.score, band: mlRes.data.band },
-    });
-
-    res.json(mlRes.data);
+    res.json(scoreData);
   } catch (err: any) { res.status(500).json({ message: err.message }); }
 });
 
