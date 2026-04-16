@@ -1,44 +1,35 @@
 {
   "name": "debt-intelligence-backend",
   "version": "1.0.0",
-  "description": "Debt Helper Dashboard — NestJS Backend",
+  "description": "Debt Intelligence System — Express.js Backend",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "nest build",
-    "start": "node dist/main",
-    "start:dev": "nest start --watch",
-    "start:prod": "node dist/main",
-    "lint": "eslint \"src/**/*.ts\"",
-    "test": "jest"
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
-    "@nestjs/common": "^10.3.0",
-    "@nestjs/core": "^10.3.0",
-    "@nestjs/platform-express": "^10.3.0",
-    "@nestjs/config": "^3.2.0",
-    "@nestjs/jwt": "^10.2.0",
-    "@nestjs/bull": "^10.1.1",
-    "@nestjs/axios": "^3.0.2",
-    "@nestjs/swagger": "^7.3.1",
     "@prisma/client": "^5.13.0",
     "@anthropic-ai/sdk": "^0.21.1",
-    "bull": "^4.12.2",
-    "bullmq": "^5.7.0",
-    "firebase-admin": "^12.1.0",
-    "twilio": "^5.0.4",
     "axios": "^1.6.8",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1",
-    "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.1"
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "twilio": "^5.0.4"
   },
   "devDependencies": {
-    "@nestjs/cli": "^10.3.2",
-    "@nestjs/testing": "^10.3.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.0",
     "prisma": "^5.13.0",
-    "typescript": "^5.4.5",
-    "ts-node": "^10.9.2",
-    "jest": "^29.7.0",
-    "@types/jest": "^29.5.12"
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.5"
   }
 }

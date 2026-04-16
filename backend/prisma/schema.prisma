@@ -9,11 +9,12 @@ datasource db {
 
 model User {
   id            String              @id @default(cuid())
-  clerkId       String              @unique
   email         String              @unique
+  password      String
+  name          String?
   monthlyIncome Float?
-  fcmToken      String?
   phone         String?
+  fcmToken      String?
   debts         Debt[]
   rules         Rule[]
   settings      DangerZoneSettings?
