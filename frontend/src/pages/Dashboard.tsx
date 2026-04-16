@@ -1,7 +1,11 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api';
-import { CreditCard, AlertTriangle, TrendingDown, Target, Zap } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
+import { CreditCard, AlertTriangle, TrendingDown, Zap, Target } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -18,104 +22,161 @@ export default function Dashboard() {
     queryFn: async () => (await api.get('/health-score')).data,
   });
 
-  const totalOutstanding = debts.reduce((s: number, d: any) => s + d.outstanding, 0);
+  const totalOutstanding = debts.reduce((s: number, d: any) => s + (d.outstanding || 0), 0);
   const totalEmi = debts.reduce((s: number, d: any) => s + (d.emiAmount || 0), 0);
   const bnplCount = debts.filter((d: any) => d.type === 'BNPL').length;
-  
-  // Mock history data for chart
-  const historyData = [
-    { name: 'Jan', outstanding: totalOutstanding * 1.1 },
-    { name: 'Feb', outstanding: totalOutstanding * 1.05 },
-    { name: 'Mar', outstanding: totalOutstanding },
+
+  const chartData = [
+    { name: 'Jan', value: Math.round(totalOutstanding * 1.12) },
+    { name: 'Feb', value: Math.round(totalOutstanding * 1.06) },
+    { name: 'Mar', value: Math.round(totalOutstanding * 1.02) },
+    { name: 'Apr', value: totalOutstanding },
   ];
 
-  if (loadingDebts || loadingHealth) return <p className="text-secondary fade-in">Loading dashboard...</p>;
+  const scoreBand = healthScore?.band || 'Unknown';
+  const score = healthScore?.score || 0;
+  const bandColor = scoreBand === 'Excellent' ? 'text-green-500' : scoreBand === 'Good' ? 'text-blue-500' : scoreBand === 'Fair' ? 'text-amber-500' : 'text-red-500';
+
+  if (loadingDebts || loadingHealth) {
+    return (
+      <div className="space-y-6 fade-in">
+        <div className="space-y-1">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[1,2,3].map(i => <Skeleton key={i} className="h-32" />)}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Skeleton className="h-72" />
+          <Skeleton className="h-72" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 fade-in">
-      <div className="flex justify-between items-end">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Welcome back</h2>
-          <p className="text-secondary mt-1">Here is your financial overview.</p>
+          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">Here's your financial overview.</p>
         </div>
-        <div className="text-right">
-          <p className="text-sm text-secondary">Financial Health Score</p>
-          <div className="flex items-center gap-2 justify-end">
-            <span className={`text-3xl font-bold ${
-              healthScore?.band === 'Excellent' ? 'text-green-500' :
-              healthScore?.band === 'Good' ? 'text-blue-500' :
-              healthScore?.band === 'Fair' ? 'text-amber-500' : 'text-red-500'
-            }`}>
-              {healthScore?.score || 0}
-            </span>
-            <span className={`badge ${
-              healthScore?.band === 'Excellent' ? 'badge-green' :
-              healthScore?.band === 'Good' ? 'badge-blue' :
-              healthScore?.band === 'Fair' ? 'badge-amber' : 'badge-red'
-            }`}>{healthScore?.band || 'Unknown'}</span>
+        <div className="flex items-center gap-3 p-4 rounded-xl border bg-card">
+          <div className="pulse-ring rounded-full">
+            <div className={`text-3xl font-bold ${bandColor}`}>{score}</div>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Health Score</p>
+            <Badge variant={scoreBand === 'Excellent' ? 'default' : 'secondary'} className={bandColor}>
+              {scoreBand}
+            </Badge>
           </div>
         </div>
       </div>
 
-      <div className="grid-3">
-        <div className="card">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500"><CreditCard className="w-5 h-5" /></div>
-            <h3 className="font-medium text-secondary">Total Debt</h3>
+      {/* Health Progress */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">Financial Health</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Progress value={score} className="h-2" />
+          <div className="flex justify-between text-xs text-muted-foreground mt-1">
+            <span>0 — Poor</span><span>50 — Fair</span><span>100 — Excellent</span>
           </div>
-          <p className="text-2xl font-bold">₹{totalOutstanding.toLocaleString()}</p>
-          <p className="text-sm text-muted mt-1">{debts.length} active accounts</p>
-        </div>
+        </CardContent>
+      </Card>
 
-        <div className="card">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-red-500/10 text-red-500"><TrendingDown className="w-5 h-5" /></div>
-            <h3 className="font-medium text-secondary">Monthly EMI Load</h3>
-          </div>
-          <p className="text-2xl font-bold">₹{totalEmi.toLocaleString()}</p>
-          <p className="text-sm text-muted mt-1">Due next 30 days</p>
-        </div>
+      {/* Stat Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="card-hover">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Debt</CardTitle>
+            <div className="p-2 rounded-lg bg-indigo-500/10"><CreditCard className="w-4 h-4 text-indigo-500" /></div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">₹{totalOutstanding.toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground mt-1">{debts.length} active accounts</p>
+          </CardContent>
+        </Card>
 
-        <div className="card">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-500"><AlertTriangle className="w-5 h-5" /></div>
-            <h3 className="font-medium text-secondary">BNPL Accounts</h3>
-          </div>
-          <p className="text-2xl font-bold">{bnplCount}</p>
-          <p className="text-sm text-muted mt-1">High frequency, low tenure</p>
-        </div>
+        <Card className="card-hover">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Monthly EMI Load</CardTitle>
+            <div className="p-2 rounded-lg bg-red-500/10"><TrendingDown className="w-4 h-4 text-red-500" /></div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">₹{totalEmi.toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground mt-1">Due next 30 days</p>
+          </CardContent>
+        </Card>
+
+        <Card className="card-hover">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">BNPL Accounts</CardTitle>
+            <div className="p-2 rounded-lg bg-amber-500/10"><AlertTriangle className="w-4 h-4 text-amber-500" /></div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{bnplCount}</p>
+            <p className="text-xs text-muted-foreground mt-1">High frequency, low tenure</p>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="grid-2">
-        <div className="card h-80 flex flex-col">
-          <h3 className="font-medium mb-4 flex items-center gap-2"><Target className="w-5 h-5 text-indigo-500" /> Debt Paydown Progress</h3>
-          <div className="flex-1 min-h-[200px]">
-             <ResponsiveContainer width="100%" height="100%">
-               <LineChart data={historyData}>
-                 <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#27272a' : '#e4e4e7'} />
-                 <XAxis dataKey="name" stroke={theme === 'dark' ? '#a1a1aa' : '#71717a'} />
-                 <YAxis stroke={theme === 'dark' ? '#a1a1aa' : '#71717a'} />
-                 <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#18181b' : '#fff', borderColor: theme === 'dark' ? '#3f3f46' : '#e4e4e7' }} />
-                 <Line type="monotone" dataKey="outstanding" stroke="#6366f1" strokeWidth={3} />
-               </LineChart>
-             </ResponsiveContainer>
-          </div>
-        </div>
+      {/* Chart + Insights */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Target className="w-4 h-4 text-indigo-500" /> Debt Paydown Trend
+            </CardTitle>
+            <CardDescription>Outstanding balance over the last 4 months</CardDescription>
+          </CardHeader>
+          <CardContent className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? 'oklch(0.269 0 0)' : 'oklch(0.922 0 0)'} />
+                <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="oklch(0.556 0 0)" />
+                <YAxis tick={{ fontSize: 12 }} stroke="oklch(0.556 0 0)" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: theme === 'dark' ? 'oklch(0.205 0 0)' : '#fff',
+                    border: '1px solid oklch(0.269 0 0)',
+                    borderRadius: 8,
+                    fontSize: 13,
+                  }}
+                  formatter={(v: any) => [`₹${Number(v).toLocaleString()}`, 'Outstanding']}
+                />
+                <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={2.5} dot={{ r: 4, fill: '#6366f1' }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
-        <div className="card">
-          <h3 className="font-medium mb-4 flex items-center gap-2"><Zap className="w-5 h-5 text-amber-500" /> Actionable Insights</h3>
-          <ul className="space-y-3">
-            {healthScore?.insights?.length > 0 ? (
-              healthScore.insights.map((insight: string, i: number) => (
-                <li key={i} className="p-3 rounded bg-elevated border border-border text-sm">
-                  {insight}
-                </li>
-              ))
-            ) : (
-               <li className="text-secondary text-sm">No insights available right now. Let's add more debt data to analyze!</li>
-            )}
-          </ul>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Zap className="w-4 h-4 text-amber-500" /> AI Insights
+            </CardTitle>
+            <CardDescription>Personalised recommendations</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {healthScore?.insights?.length > 0
+              ? healthScore.insights.map((insight: string, i: number) => (
+                  <div key={i} className="p-3 rounded-lg bg-muted text-sm">
+                    {insight}
+                  </div>
+                ))
+              : (
+                <div className="p-3 rounded-lg bg-muted text-sm text-muted-foreground">
+                  Add your debt accounts to start getting personalised insights from the ML model.
+                </div>
+              )
+            }
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

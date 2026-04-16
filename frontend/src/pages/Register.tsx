@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { TrendingDown } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Register() {
@@ -13,84 +18,67 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password.length < 8) { toast.error('Password must be at least 8 characters'); return; }
     setLoading(true);
     try {
       await register(name, email, password);
-      toast.success('Account created successfully!');
+      toast.success('Account created! Welcome aboard 🎉');
       navigate('/');
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Registration failed');
+      toast.error(err.response?.data?.message || 'Registration failed. Try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden" 
-         style={{ background: 'var(--bg-base)' }}>
-      <div className="absolute top-1/3 left-1/3 w-96 h-96 rounded-full pointer-events-none fade-in" 
-           style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)' }} />
-      
-      <div className="relative z-10 w-full max-w-md px-4 fade-in">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-purple-500/5 blur-3xl" />
+      </div>
+
+      <div className="w-full max-w-sm fade-in relative z-10">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-500">
-              <span className="text-white text-lg font-bold">D</span>
-            </div>
-            <span className="text-xl font-bold text-primary">Debt Helper</span>
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 mb-4">
+            <TrendingDown className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-primary">Create an account</h1>
-          <p className="mt-1 text-sm text-secondary">Start your journey to financial freedom</p>
+          <h1 className="text-2xl font-bold tracking-tight">Create an account</h1>
+          <p className="text-muted-foreground text-sm mt-1">Start your journey to financial freedom</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="card p-6 space-y-4">
-          <div>
-            <label className="label">Full Name</label>
-            <input 
-              type="text" 
-              className="input" 
-              required 
-              value={name}
-              onChange={e => setName(e.target.value)}
-              placeholder="John Doe"
-            />
-          </div>
-          <div>
-            <label className="label">Email Address</label>
-            <input 
-              type="email" 
-              className="input" 
-              required 
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="you@example.com"
-            />
-          </div>
-          <div>
-            <label className="label">Password <span className="text-xs font-normal text-muted ml-2">(min. 8 chars)</span></label>
-            <input 
-              type="password" 
-              className="input" 
-              required 
-              minLength={8}
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
-          </div>
-          
-          <button 
-            type="submit" 
-            className="btn btn-primary w-full justify-center mt-2"
-            disabled={loading}
-          >
-            {loading ? 'Creating...' : 'Create Account'}
-          </button>
-          
-          <div className="text-center mt-4 text-sm text-secondary">
-            Already have an account? <Link to="/login" className="text-indigo-500 hover:text-indigo-400 font-medium">Sign In</Link>
-          </div>
-        </form>
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg">Get Started</CardTitle>
+            <CardDescription>Fill in your details to create your account</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input id="name" placeholder="John Doe" value={name} onChange={e => setName(e.target.value)} required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">
+                  Password <span className="text-muted-foreground text-xs">(min. 8 characters)</span>
+                </Label>
+                <Input id="password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={8} />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? 'Creating account...' : 'Create Account'}
+              </Button>
+            </form>
+            <p className="text-center text-sm text-muted-foreground mt-4">
+              Already have an account?{' '}
+              <Link to="/login" className="text-indigo-500 hover:text-indigo-400 font-medium underline-offset-4 hover:underline">
+                Sign in
+              </Link>
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
