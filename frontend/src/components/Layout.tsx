@@ -7,14 +7,6 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
   LayoutDashboard, CreditCard, Compass, ShieldAlert,
   HeartPulse, Settings, LogOut, Sun, Moon, Menu, TrendingDown,
 } from 'lucide-react';
@@ -88,36 +80,42 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       <Separator className="bg-sidebar-border" />
 
       {/* User Footer */}
-      <div className="px-3 py-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="w-full justify-start gap-3 h-auto py-2 px-3">
-              <Avatar className="w-8 h-8 shrink-0">
-                <AvatarFallback className="bg-indigo-500/20 text-indigo-500 text-xs font-bold">
-                  {user?.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col items-start overflow-hidden">
-                <span className="text-sm font-medium truncate w-full">{user?.name || 'User'}</span>
-                <span className="text-xs text-muted-foreground truncate w-full">{user?.email}</span>
-              </div>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="top" className="w-48 mb-1">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={toggle}>
-              {theme === 'dark' ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
-              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
-              <LogOut className="w-4 h-4 mr-2" />
-              Sign Out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <div className="px-3 py-4 space-y-2">
+        {/* User info row */}
+        <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-muted/50">
+          <Avatar className="w-8 h-8 shrink-0">
+            <AvatarFallback className="bg-indigo-500/20 text-indigo-500 text-xs font-bold">
+              {user?.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col overflow-hidden flex-1">
+            <span className="text-sm font-medium truncate">{user?.name || 'User'}</span>
+            <span className="text-xs text-muted-foreground truncate">{user?.email}</span>
+          </div>
+        </div>
+
+        {/* Theme toggle */}
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground"
+          onClick={toggle}
+        >
+          {theme === 'dark'
+            ? <><Sun className="w-4 h-4" /> Light Mode</>
+            : <><Moon className="w-4 h-4" /> Dark Mode</>
+          }
+        </Button>
+
+        {/* Logout — always visible */}
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/10"
+          onClick={handleLogout}
+        >
+          <LogOut className="w-4 h-4" /> Sign Out
+        </Button>
       </div>
+
     </div>
   );
 }
