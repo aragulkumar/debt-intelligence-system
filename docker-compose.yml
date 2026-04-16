@@ -1,0 +1,46 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/debthelper
+      - REDIS_URL=redis://redis:6379
+      - ML_SERVICE_URL=http://ml-service:8000
+    env_file: ./backend/.env
+    depends_on:
+      - db
+      - redis
+      - ml-service
+    restart: unless-stopped
+
+  ml-service:
+    build: ./ml-service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ml-service/app/models:/app/models
+    restart: unless-stopped
+
+  db:
+    image: timescale/timescaledb:latest-pg15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: debthelper
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

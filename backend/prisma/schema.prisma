@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String              @id @default(cuid())
+  clerkId       String              @unique
+  email         String              @unique
+  monthlyIncome Float?
+  fcmToken      String?
+  phone         String?
+  debts         Debt[]
+  rules         Rule[]
+  settings      DangerZoneSettings?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
+
+model Debt {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  type         DebtType
+  principal    Float
+  outstanding  Float
+  interestRate Float
+  emiAmount    Float?
+  dueDate      DateTime
+  tag          String?
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Rule {
+  id         String  @id @default(cuid())
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trigger    String
+  threshold  Float
+  action     String
+  amount     Float?
+  targetDebt String?
+  isActive   Boolean @default(true)
+  createdAt  DateTime @default(now())
+}
+
+model DangerZoneSettings {
+  id                         String  @id @default(cuid())
+  userId                     String  @unique
+  user                       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  overdueWarningDays         Int     @default(3)
+  maxEmiLoadPercent          Float   @default(40)
+  interestRateAlertThreshold Float   @default(24)
+  creditUtilisationWarning   Float   @default(70)
+  fcmEnabled                 Boolean @default(true)
+  smsEnabled                 Boolean @default(false)
+  updatedAt                  DateTime @updatedAt
+}
+
+model HealthScoreHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  score     Int
+  band      String
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+enum DebtType {
+  BNPL
+  EMI
+  CREDIT_CARD
+  PERSONAL_LOAN
+  OTHER
+}
