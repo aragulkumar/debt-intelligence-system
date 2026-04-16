@@ -33,6 +33,7 @@ export default function RegisterPage() {
         </div>
 
         <SignUp
+          routing="hash"
           appearance={{
             variables: {
               colorPrimary: "#6366f1",

@@ -1,26 +1,30 @@
-import { Controller, Get, Post, Body, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { JwtAuthGuard } from './jwt.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  private getUserId(req: any) {
-    return req.headers['x-user-id'] || 'dummy-user-id';
+  @Post('register')
+  register(@Body() body: { name: string; email: string; password: string }) {
+    return this.authService.register(body.name, body.email, body.password);
   }
 
   @Post('login')
-  login(@Body() body: { clerkId: string, email: string }) {
-    return this.authService.login(body.clerkId, body.email);
-  }
-
-  @Post('logout')
-  logout(@Req() req: any) {
-    return this.authService.logout(this.getUserId(req));
+  login(@Body() body: { email: string; password: string }) {
+    return this.authService.login(body.email, body.password);
   }
 
   @Get('me')
+  @UseGuards(JwtAuthGuard)
   getProfile(@Req() req: any) {
-    return this.authService.me(this.getUserId(req));
+    return this.authService.me(req.user.sub);
+  }
+
+  @Post('logout')
+  logout() {
+    // JWT is stateless — client just deletes the token
+    return { success: true, message: 'Logged out successfully' };
   }
 }

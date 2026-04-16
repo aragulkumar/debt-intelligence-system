@@ -37,6 +37,7 @@ export default function LoginPage() {
         </div>
 
         <SignIn
+          routing="hash"
           appearance={{
             variables: {
               colorPrimary: "#6366f1",
