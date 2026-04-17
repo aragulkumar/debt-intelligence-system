@@ -8,7 +8,7 @@ import repaymentRoutes from './routes/repayment';
 import healthScoreRoutes from './routes/health-score';
 import mlRoutes from './routes/ml';
 import rulesRoutes from './routes/rules';
-import aiRoutes from './routes/ai';
+
 import settingsRoutes from './routes/settings';
 import adminRoutes from './routes/admin';
 
@@ -29,7 +29,7 @@ app.use('/api/repayment', repaymentRoutes);
 app.use('/api/health-score', healthScoreRoutes);
 app.use('/api/ml', mlRoutes);
 app.use('/api/rules', rulesRoutes);
-app.use('/api/ai', aiRoutes);
+
 app.use('/api/settings', settingsRoutes);
 app.use('/api/admin', adminRoutes);
 
@@ -44,7 +44,7 @@ app.listen(PORT, () => {
   console.log(`   → Health Score: /api/health-score`);
   console.log(`   → Repayment:    /api/repayment`);
   console.log(`   → Rules:        /api/rules`);
-  console.log(`   → AI Coach:     /api/ai`);
+
   console.log(`   → ML Service:   /api/ml`);
   console.log(`   → Settings:     /api/settings`);
   console.log(`   → Admin:        /api/admin\n`);

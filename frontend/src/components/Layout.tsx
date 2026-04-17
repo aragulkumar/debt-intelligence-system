@@ -16,7 +16,7 @@ const LINKS = [
   { name: 'My Debts',   icon: CreditCard,       path: '/debts' },
   { name: 'Strategy',   icon: Compass,           path: '/strategy' },
   { name: 'Rules',      icon: ShieldAlert,       path: '/rules' },
-  { name: 'AI Coach',   icon: HeartPulse,        path: '/coach' },
+
   { name: 'Settings',   icon: Settings,          path: '/settings' },
 ];
 

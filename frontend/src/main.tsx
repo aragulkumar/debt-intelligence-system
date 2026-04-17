@@ -15,7 +15,7 @@ import Dashboard from './pages/Dashboard';
 import Debts from './pages/Debts';
 import Strategy from './pages/Strategy';
 import Rules from './pages/Rules';
-import Coach from './pages/Coach';
+
 import Settings from './pages/Settings';
 import Admin from './pages/Admin';
 
@@ -40,7 +40,7 @@ function AppRoutes() {
       <Route path="/debts" element={<ProtectedRoute><Debts /></ProtectedRoute>} />
       <Route path="/strategy" element={<ProtectedRoute><Strategy /></ProtectedRoute>} />
       <Route path="/rules" element={<ProtectedRoute><Rules /></ProtectedRoute>} />
-      <Route path="/coach" element={<ProtectedRoute><Coach /></ProtectedRoute>} />
+
       <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
       

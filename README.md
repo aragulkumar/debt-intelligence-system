@@ -1,224 +1,418 @@
-# 🧠 Debt Intelligence System
+# 💰 Debt Intelligence System
 
-> A full-stack, AI + ML-powered debt management platform engineered for lower and middle-class households in India — transforming debt from a passive burden into a proactively managed strategy.
+> An AI-powered personal debt management platform that helps users track, analyse, and systematically eliminate their debt using Google Gemini AI, smart repayment strategies, and an automated rules engine.
 
----
-
-## 📌 Problem Statement
-
-India's consumer debt landscape — dominated by **BNPL (Buy Now Pay Later)**, **EMIs**, and **revolving credit card balances** — traps millions of users in a cycle they cannot analytically understand or escape.
-
-Existing finance apps either track expenses **passively** or offer **generic advice** disconnected from real user numbers. There is no tool that combines privacy-first data entry with machine learning-powered predictive analytics, tailored for everyday Indian households.
-
----
-
-## 💡 Proposed Solution
-
-The **Debt Intelligence System** is a full-stack, AI + ML-powered debt management platform specifically engineered for **lower and middle-class households**. It empowers users to take control of their financial health through a **manual data-entry model**, ensuring privacy while providing high-level analytics.
-
-The platform is designed to:
-
-- 📊 Give users a **real-time, data-driven view** of all their debts (entered manually by the user) in one place.
-- 🔮 **Predict default risk** before it happens using machine learning based on user-provided financial signals.
-- ♟️ **Recommend the optimal repayment strategy** using hybrid and custom approaches to clear debt faster.
-- 🏛️ Provide an **admin dashboard** with risk heatmaps and compliance analytics for institutional oversight.
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black)
+![Express](https://img.shields.io/badge/Express-000000?style=flat&logo=express&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
+![Gemini AI](https://img.shields.io/badge/Gemini_AI-4285F4?style=flat&logo=google&logoColor=white)
+![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000?style=flat&logo=shadcnui&logoColor=white)
 
 ---
 
-## 🛠️ Tech Stack
+## 📋 Table of Contents
 
-| Layer | Technology |
-|---|---|
-| **Frontend** | Next.js 16 + React 19 |
-| **Backend** | NestJS + Node.js 20 |
-| **Database** | PostgreSQL 15 |
-| **ML Service** | FastAPI (Python 3.11) |
-| **ML Models** | XGBoost, scikit-learn |
-| **ORM** | Prisma |
-| **Containerization** | Docker + Docker Compose |
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Demo Account](#demo-account)
+- [Pages & Functionality](#pages--functionality)
+- [API Reference](#api-reference)
+- [Project Structure](#project-structure)
 
 ---
 
-## 🏗️ Architecture & Workflow
+## Overview
+
+The **Debt Intelligence System** is a full-stack web application designed for users who want to take control of their debt. It consolidates all your credit cards, loans, and BNPL accounts in one place, calculates a real-time financial health score using **Google Gemini AI**, and recommends the most optimal repayment strategy (Avalanche, Snowball, or AI Hybrid).
+
+Key differentiators:
+- 🤖 **Gemini-powered health score** — not a simple formula, but real AI analysis of your debt portfolio
+- 💬 **AI Financial Coach** — a context-aware chatbot that knows your exact debt profile
+- 🔔 **Rules Engine** — automated alert system that flags high DTI, upcoming EMIs, and high-interest accounts
+- 🌗 **Dark/Light Mode** — full theme support with persistent preference
+
+---
+
+## Features
+
+| Feature | Description |
+|---------|-------------|
+| 🔐 **Local JWT Auth** | Register & login with email/password. Passwords hashed with bcrypt |
+| 📊 **Dashboard** | Total debt, monthly EMI, health score, trend chart, and AI insights |
+| 💳 **Debt Manager** | Add/delete credit cards, personal loans, BNPL, auto loans |
+| 🧮 **Strategy Simulator** | Avalanche, Snowball, and AI Hybrid repayment calculators |
+| 🤖 **AI Health Score** | Gemini AI analyses DTI, EMI ratio, interest rates → score 0–100 |
+| 💬 **AI Coach** | Chat with Gemini about your specific debts and get actionable advice |
+| ⚙️ **Rules Engine** | Automated financial alerts triggered by configurable thresholds |
+| 👤 **Settings** | Update name, income, phone number |
+| 🛡️ **Admin Dashboard** | Platform analytics — total users, debts, outstanding amounts |
+| 🌗 **Dark/Light Theme** | Persistent theme toggle in sidebar |
+
+---
+
+## Tech Stack
+
+### Frontend
+| Library | Purpose |
+|---------|---------|
+| React 18 + Vite | Fast SPA framework |
+| TypeScript | Type safety |
+| shadcn/ui | Premium accessible UI components |
+| Tailwind CSS v4 | Utility-first styling |
+| TanStack React Query | Server state & caching |
+| React Router v6 | Client-side routing |
+| Recharts | Debt trend chart |
+| Axios | HTTP client with JWT interceptor |
+| Sonner | Toast notifications |
+| Lucide React | Icons |
+
+### Backend
+| Library | Purpose |
+|---------|---------|
+| Express.js | REST API server |
+| TypeScript + ts-node-dev | Type-safe backend dev server |
+| Prisma ORM | Database access layer |
+| PostgreSQL | Relational database |
+| bcryptjs | Password hashing |
+| jsonwebtoken | JWT generation & verification |
+| @google/generative-ai | Gemini AI integration |
+
+---
+
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Next.js 16 Frontend                   │
-│          (Dashboard · Debt Entry · Coach · Admin)        │
-└──────────────────────────┬──────────────────────────────┘
-                           │ REST API
-┌──────────────────────────▼──────────────────────────────┐
-│                  NestJS Backend (Node.js 20)             │
-│  Auth · Debts · Repayment · Rules · Notifications        │
-│  Health Score · AI Coach · ML Bridge · Admin · Settings  │
-└────────────┬─────────────────────────────┬──────────────┘
-             │ Prisma ORM                  │ HTTP
-┌────────────▼────────────┐  ┌────────────▼──────────────┐
-│    PostgreSQL 15 DB      │  │  FastAPI ML Microservice   │
-│  (User · Debt · Rules)   │  │  XGBoost · scikit-learn   │
-└─────────────────────────┘  └───────────────────────────┘
-```
-
-### Request Workflow (Example: User Opens Dashboard)
-
-1. **Authentication** — User identity is verified to secure sensitive financial records.
-2. **Debts Fetch** — The system retrieves the user's manually entered debt data, including outstanding balances and monthly EMI loads, from PostgreSQL 15.
-3. **Health Score** — The NestJS backend calls the FastAPI ML Service to run regression models on the provided user data.
-4. **Risk Score** — Financial ratios are proxied to XGBoost to return a risk label (`"high"` / `"low"`) and identify contributing factors.
-5. **Rules Evaluation** — A rule engine scans for user-defined triggers; if a threshold (like a 40% debt-to-income ratio) is crossed, the system fires an alert.
-6. **Notification** — Real-time alerts are sent to the user to prevent missed payments or over-leveraging.
-
----
-
-## ✨ Core Features
-
-### 🔐 Manual Data Entry Engine
-A streamlined interface where users input their own loan details, interest rates, and EMI dates — ensuring full control over their data without linking bank accounts.
-
-### 📈 Debt Health Score (0–100)
-A regression model that analyzes payment behavior, credit utilization, and total debt load to generate a holistic financial health score.
-
-### ♟️ Repayment Strategy Engine
-Offers **Snowball**, **Avalanche**, and **Hybrid** strategies to help users clear debt efficiently based on their financial profile.
-
-### 🔮 What-If Simulator
-Allows users to visualize how extra payments toward specific debts impact their total interest paid and payoff timeline.
-
-### ⚠️ Default Risk Prediction
-An **XGBoost classifier** that predicts the probability of a user missing a payment based on the financial signals provided — before it happens.
-
-### 🤖 AI Debt Coach
-A conversational AI coach that provides personalized, context-aware advice based on a user's live debt profile.
-
-### 🏛️ Admin Dashboard
-Risk heatmaps, BNPL cluster analytics, and compliance-grade user risk tables for institutional and platform-level oversight.
-
-### 🔔 Smart Rule Engine + Notifications
-User-defined triggers (e.g., DTI > 40%, EMI due within 3 days) that automatically fire real-time alerts to keep users on track.
-
----
-
-## 📁 Project Structure
-
-```
-debt-intelligence-system/
-├── frontend/               # Next.js 16 + React 19 application
-│   ├── app/                # App router pages (dashboard, admin, auth)
-│   ├── components/         # Reusable UI components
-│   ├── hooks/              # Custom React hooks (debts, health, rules)
-│   ├── store/              # Zustand global state
-│   └── lib/                # API client & utilities
-│
-├── backend/                # NestJS + Node.js 20 API server
-│   ├── src/
-│   │   ├── auth/           # JWT authentication
-│   │   ├── debts/          # Debt CRUD & management
-│   │   ├── repayment/      # Strategy engine (Snowball/Avalanche/Hybrid)
-│   │   ├── health-score/   # ML-backed health scoring
-│   │   ├── rules/          # Rule engine & alert triggers
-│   │   ├── ai/             # AI Coach service
-│   │   ├── ml/             # ML microservice bridge
-│   │   ├── notifications/  # Alert & notification system
-│   │   ├── admin/          # Admin analytics & risk management
-│   │   └── settings/       # User settings & preferences
-│   └── prisma/             # PostgreSQL schema (Prisma ORM)
-│
-├── ml-service/             # FastAPI Python ML microservice
-│   ├── app/
-│   │   ├── routes/         # health_score · default_risk · bnpl_cluster
-│   │   └── schemas.py      # Pydantic request/response models
-│   └── training/           # XGBoost & sklearn model training scripts
-│
-├── docker-compose.yml      # Full-stack orchestration
-├── .env.example            # Environment variable template
-└── Backend.md              # Detailed backend specification
+Browser (http://localhost:4000)
+        │
+        │  /api/* → proxied by Vite dev server
+        ▼
+Express Backend (http://localhost:3000)
+        │
+        ├── JWT Auth Middleware
+        ├── Prisma ORM
+        │       └── PostgreSQL (port 5432)
+        │
+        └── Google Gemini AI (external API)
+                ├── Health Score Analysis
+                └── AI Coach Chat
 ```
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-- Node.js 20+
-- Python 3.11+
-- PostgreSQL 15
-- Docker & Docker Compose (recommended)
+
+Make sure you have the following installed:
+- [Node.js](https://nodejs.org/) v18 or higher
+- [PostgreSQL](https://www.postgresql.org/download/) v14 or higher
+- [Git](https://git-scm.com/)
 
 ### 1. Clone the Repository
+
 ```bash
 git clone https://github.com/aragulkumar/debt-intelligence-system.git
 cd debt-intelligence-system
 ```
 
-### 2. Configure Environment
-```bash
-cp .env.example .env
-# Edit .env with your database credentials, JWT secret, and ML service URL
+### 2. Set Up the Database
+
+Open pgAdmin or psql and create the database:
+
+```sql
+CREATE DATABASE debtintelligence;
 ```
 
-### 3. Run with Docker (Recommended)
-```bash
-docker-compose up --build
-```
+### 3. Configure the Backend
 
-### 4. Run Manually
-
-**Backend:**
 ```bash
 cd backend
 npm install
-npx prisma migrate dev
-npm run start:dev
 ```
 
-**ML Service:**
+Create the `.env` file:
+
 ```bash
-cd ml-service
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+cp .env.example .env
 ```
 
-**Frontend:**
+Edit `backend/.env` with your values:
+
+```env
+DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/debtintelligence
+JWT_SECRET=your-super-secret-jwt-key-change-this
+FRONTEND_URL=http://localhost:4000
+PORT=3000
+NODE_ENV=development
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+> 💡 Get a **free Gemini API key** at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+
+### 4. Run Database Migrations
+
+```bash
+npx prisma migrate dev --name init
+npx prisma generate
+```
+
+### 5. Seed Demo Data (Optional but Recommended)
+
+This creates a realistic demo account with 5 debt accounts, rules, and 6 months of history:
+
+```bash
+npx ts-node src/seed.ts
+```
+
+### 6. Start the Backend
+
+```bash
+npm run dev
+```
+
+You should see:
+```
+🚀 Debt Intelligence API running on http://localhost:3000
+   → Auth:         /api/auth
+   → Debts:        /api/debts
+   → Health Score: /api/health-score
+   ...
+```
+
+### 7. Configure and Start the Frontend
+
+Open a **new terminal**:
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
----
+You should see:
+```
+VITE v5.4.21  ready in 681 ms
+➜  Local:   http://localhost:4000/
+```
 
-## 📊 ML Models
+### 8. Open the App
 
-| Model | Algorithm | Purpose |
-|---|---|---|
-| **Health Score** | Gradient Boosted Regressor (sklearn) | Outputs a 0–100 financial health score |
-| **Default Risk** | XGBoost Classifier | Predicts `high` / `low` default risk |
-| **BNPL Cluster** | K-Means Clustering | Segments BNPL users by behavior profile |
-
-All models are trained on synthetic, India-specific financial data via the training scripts in `ml-service/training/`.
+Visit **[http://localhost:4000](http://localhost:4000)** in your browser.
 
 ---
 
-## ✅ Feasibility & Viability
+## Environment Variables
 
-### Technical Feasibility
-- **Scalable Frontend**: Next.js 16 and React 19 provide the speed and accessibility required for a modern fintech dashboard.
-- **Robust Backend**: NestJS ensures a modular, maintainable architecture that scales with complex business logic.
-- **Model Accuracy**: XGBoost is an industry standard for tabular financial data, offering high precision for risk and health scoring.
+### `backend/.env`
 
-### Market Viability & Social Impact
-- **Target Demographic**: Specifically focused on lower and middle-class populations who often lack access to professional financial advisors and are most vulnerable to high-interest debt traps.
-- **Competitive Gap**: Most apps require intrusive bank linking; this system builds trust by letting the user provide the data, then uses ML to predict where the user is headed.
-- **Privacy-First**: By focusing entirely on user-provided data, the system bypasses the security risks and privacy hurdles associated with direct bank account scraping (Plaid/AA).
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | PostgreSQL connection string | ✅ Yes |
+| `JWT_SECRET` | Secret key for signing JWT tokens | ✅ Yes |
+| `PORT` | Backend server port (default: 3000) | Optional |
+| `FRONTEND_URL` | Frontend origin for CORS | ✅ Yes |
+| `NODE_ENV` | `development` or `production` | Optional |
+| `GEMINI_API_KEY` | Google Gemini AI API key | Optional* |
 
----
-
-## 🎯 Summary
-
-The **Debt Intelligence System** is a professional-grade fintech platform built on a modern stack including **Next.js 16**, **NestJS**, and **FastAPI**. It transforms debt management from a passive tracking exercise into a **proactive, AI-driven strategy** — helping lower and middle-class users achieve financial stability and freedom through their own data.
+> *Without `GEMINI_API_KEY`, the app falls back to a local formula for health score and generic AI coach responses. All other features work normally.
 
 ---
 
-## 📄 License
+## Demo Account
 
-This project is open-source and available under the [MIT License](LICENSE).
+After running the seed script, use these credentials:
+
+| Field | Value |
+|-------|-------|
+| **Email** | `demo@debthelper.com` |
+| **Password** | `Demo@1234` |
+| **Name** | Arjun Sharma |
+| **Monthly Income** | ₹75,000 |
+
+### Seeded Debt Accounts
+
+| Account | Type | Outstanding | Interest | EMI |
+|---------|------|------------|----------|-----|
+| HDFC Regalia Credit Card | Credit Card | ₹45,000 | 18.5% | ₹3,500 |
+| SBI Personal Loan | Personal Loan | ₹1,20,000 | 14.5% | ₹5,800 |
+| Bajaj Finserv BNPL | BNPL | ₹12,500 | 24.0% | ₹2,500 |
+| ICICI Bank Car Loan | Other | ₹3,50,000 | 9.5% | ₹7,200 |
+| Amazon Pay Later | BNPL | ₹8,000 | 26.0% | ₹2,000 |
+| **Total** | | **₹5,35,500** | | **₹21,000/mo** |
+
+---
+
+## Pages & Functionality
+
+### `/` — Dashboard
+- Total outstanding debt, monthly EMI load, BNPL account count
+- Gemini AI-powered financial health score (0–100) with band: Poor / Fair / Good / Excellent
+- Progress bar visualising health score
+- Line chart showing debt paydown trend over 4 months
+- AI-generated insights from Gemini
+
+### `/debts` — My Debts
+- View all active debt accounts as cards
+- Add new accounts via dialog — supports Credit Card, Personal Loan, BNPL, Mortgage, Auto Loan, Student Loan
+- Delete accounts (hover to reveal delete button)
+- Summary bar showing total outstanding by type
+
+### `/strategy` — Repayment Strategy
+- **Avalanche** — pay highest interest first (minimises total interest)
+- **Snowball** — pay lowest balance first (builds momentum)
+- **Hybrid AI** — ML-optimised combination
+- Optionally specify extra monthly payment amount
+- Returns an ordered payoff plan with suggested extra payment per account
+
+### `/rules` — Rules Engine
+- View configured financial alert rules
+- Run the engine manually to see which rules are triggered
+- Currently evaluates: DTI ratio threshold, EMI due date proximity
+
+### `/coach` — AI Financial Coach
+- Real-time chat with Google Gemini 1.5 Flash
+- Full debt context injected automatically (income, all debts, totals)
+- Starter prompt chips for common questions
+- Smooth scrolling chat UI with typing indicator
+
+### `/settings` — Settings
+- Update name, phone number, monthly income
+- Email is read-only (used for auth)
+
+### `/admin` — Admin Dashboard
+- Platform-wide stats: total users, active debts, total outstanding
+- Debt breakdown by type
+- Full user list with debt count and total
+
+---
+
+## API Reference
+
+All routes except `/api/auth/*` require `Authorization: Bearer <token>` header.
+
+### Auth
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Create account → returns JWT |
+| POST | `/api/auth/login` | Login → returns JWT |
+| GET | `/api/auth/me` | Get current user profile |
+
+### Debts
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/debts` | List all active debts |
+| POST | `/api/debts` | Add new debt |
+| PUT | `/api/debts/:id` | Update debt |
+| DELETE | `/api/debts/:id` | Delete debt |
+
+### Health Score
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/health-score` | Gemini AI health score + insights |
+| GET | `/api/health-score/history` | Last 30 score entries |
+
+### AI Coach
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/ai/chat` | Send message → Gemini response |
+
+### Strategy
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/repayment/strategy` | Calculate repayment order |
+
+### Rules
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/rules` | List all rules |
+| POST | `/api/rules` | Create rule |
+| PUT | `/api/rules/:id` | Update rule |
+| DELETE | `/api/rules/:id` | Delete rule |
+| POST | `/api/rules/evaluate` | Run engine against debts |
+
+---
+
+## Project Structure
+
+```
+debt-intelligence-system/
+├── backend/
+│   ├── prisma/
+│   │   └── schema.prisma          # Database models
+│   ├── src/
+│   │   ├── db/
+│   │   │   └── prisma.ts          # Prisma client singleton
+│   │   ├── middleware/
+│   │   │   └── auth.ts            # JWT verification middleware
+│   │   ├── routes/
+│   │   │   ├── auth.ts            # Register / Login / Me
+│   │   │   ├── debts.ts           # CRUD for debt accounts
+│   │   │   ├── health-score.ts    # Gemini AI health analysis
+│   │   │   ├── ai.ts              # Gemini AI coach chat
+│   │   │   ├── repayment.ts       # Strategy simulator
+│   │   │   ├── rules.ts           # Rules engine
+│   │   │   ├── settings.ts        # Profile update
+│   │   │   └── admin.ts           # Admin analytics
+│   │   ├── index.ts               # Express app entry point
+│   │   └── seed.ts                # Demo data seed script
+│   ├── .env                       # Environment variables (git-ignored)
+│   └── package.json
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Layout.tsx         # Sidebar + main wrapper
+│   │   │   └── ui/                # shadcn/ui components
+│   │   ├── context/
+│   │   │   ├── AuthContext.tsx    # JWT auth state
+│   │   │   └── ThemeContext.tsx   # Dark/light mode
+│   │   ├── lib/
+│   │   │   ├── api.ts             # Axios instance with JWT interceptor
+│   │   │   └── utils.ts           # shadcn cn() utility
+│   │   ├── pages/
+│   │   │   ├── Login.tsx
+│   │   │   ├── Register.tsx
+│   │   │   ├── Dashboard.tsx
+│   │   │   ├── Debts.tsx
+│   │   │   ├── Strategy.tsx
+│   │   │   ├── Rules.tsx
+│   │   │   ├── Coach.tsx
+│   │   │   ├── Settings.tsx
+│   │   │   └── Admin.tsx
+│   │   ├── main.tsx               # App entry, routing
+│   │   └── index.css              # shadcn design tokens + globals
+│   ├── components.json            # shadcn/ui config
+│   ├── vite.config.ts
+│   └── package.json
+│
+└── README.md
+```
+
+---
+
+## Common Commands
+
+```bash
+# Re-seed demo data
+cd backend && npx ts-node src/seed.ts
+
+# Run database migrations after schema changes
+cd backend && npx prisma migrate dev
+
+# Open Prisma Studio (visual DB browser)
+cd backend && npx prisma studio
+
+# Build frontend for production
+cd frontend && npm run build
+```
+
+---
+
+## License
+
+MIT — free to use and modify.
