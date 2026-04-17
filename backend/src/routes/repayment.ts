@@ -46,11 +46,70 @@ router.post('/strategy', async (req: AuthRequest, res: Response) => {
     const debts = await prisma.debt.findMany({
       where: { userId: req.user!.sub, isActive: true },
     });
-    let result;
-    if (strategy === 'avalanche') result = calcAvalanche(debts, extraMonthlyPayment);
-    else if (strategy === 'snowball') result = calcSnowball(debts, extraMonthlyPayment);
-    else result = calcHybrid(debts, extraMonthlyPayment);
-    res.json({ strategy, order: result });
+    
+    if (debts.length === 0) return res.json({ strategy, order: [], projection: [] });
+
+    // 1. Calculate sorting order
+    let order;
+    if (strategy === 'avalanche') order = calcAvalanche(debts, extraMonthlyPayment);
+    else if (strategy === 'snowball') order = calcSnowball(debts, extraMonthlyPayment);
+    else order = calcHybrid(debts, extraMonthlyPayment);
+
+    // 2. 60-month Projection Simulation Loop
+    const projection = [];
+    
+    // Deep clone state buffers
+    let baseDebts = debts.map(d => ({ ...d, emiAmount: d.emiAmount || (d.outstanding * 0.05) }));
+    let optDebts = order.map(d => ({ ...d, emiAmount: d.emiAmount || (d.outstanding * 0.05) }));
+    
+    for (let month = 0; month <= 60; month++) {
+      let baseTotal = 0;
+      let optTotal = 0;
+
+      // Base: Just minimum payments
+      baseDebts.forEach(d => {
+        if (d.outstanding > 0) {
+          const interest = d.outstanding * (d.interestRate / 100 / 12);
+          d.outstanding = Math.max(0, d.outstanding + interest - d.emiAmount);
+        }
+        baseTotal += d.outstanding;
+      });
+
+      // Optimized: Minimums + Extra directed at #1 priority
+      let extraAvailable = extraMonthlyPayment;
+      optDebts.forEach(d => {
+        if (d.outstanding > 0) {
+          const interest = d.outstanding * (d.interestRate / 100 / 12);
+          
+          let payment = d.emiAmount;
+          // Apply extra to highest priority that isn't paid off yet
+          if (extraAvailable > 0) {
+            payment += extraAvailable;
+            extraAvailable = 0; 
+          }
+          
+          const prePaymentBal = d.outstanding + interest;
+          d.outstanding = Math.max(0, prePaymentBal - payment);
+          
+          // If we overpaid, roll the extra forward to the next priority debt
+          if (payment > prePaymentBal) {
+            extraAvailable = payment - prePaymentBal;
+          }
+        }
+        optTotal += d.outstanding;
+      });
+
+      projection.push({
+        month: \`Month \${month}\`,
+        baseBalance: Math.round(baseTotal),
+        optimizedBalance: Math.round(optTotal)
+      });
+
+      // Break early if both are zero
+      if (baseTotal === 0 && optTotal === 0) break;
+    }
+
+    res.json({ strategy, order, projection });
   } catch (err: any) { res.status(500).json({ message: err.message }); }
 });
 

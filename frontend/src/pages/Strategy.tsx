@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Calculator, TrendingDown, Snowflake, Zap, ArrowRight } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { toast } from 'sonner';
 
 const STRATEGIES = [
@@ -135,6 +136,49 @@ export default function Strategy() {
                 {result.summary && (
                   <div className="mt-4 p-3 rounded-lg bg-muted text-sm text-muted-foreground">
                     {result.summary}
+                  </div>
+                )}
+                
+                {result.projection && result.projection.length > 0 && (
+                  <div className="mt-6 pt-6 border-t">
+                    <h3 className="text-sm font-semibold mb-4 text-center">Long-Term Debt Impact</h3>
+                    <div className="h-64 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={result.projection} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                          <defs>
+                            <linearGradient id="colorBase" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                              <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                            </linearGradient>
+                            <linearGradient id="colorOpt" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
+                              <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" opacity={0.2} vertical={false} />
+                          <XAxis 
+                            dataKey="month" 
+                            fontSize={10} 
+                            tickLine={false} 
+                            axisLine={false}
+                            minTickGap={30}
+                          />
+                          <YAxis 
+                            fontSize={10} 
+                            tickLine={false} 
+                            axisLine={false} 
+                            tickFormatter={(v) => \`₹\${v.toLocaleString()}\`} 
+                          />
+                          <Tooltip 
+                            contentStyle={{ borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--card)' }}
+                            labelStyle={{ color: 'var(--muted-foreground)' }}
+                            formatter={(value: number) => \`₹\${value.toLocaleString()}\`}
+                          />
+                          <Area type="monotone" dataKey="baseBalance" name="Min Pay Timeline" stroke="#ef4444" fillOpacity={1} fill="url(#colorBase)" />
+                          <Area type="monotone" dataKey="optimizedBalance" name="Optimized Timeline" stroke="#22c55e" strokeWidth={2} fillOpacity={1} fill="url(#colorOpt)" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
                 )}
               </div>

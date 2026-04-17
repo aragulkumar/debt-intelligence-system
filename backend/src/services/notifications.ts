@@ -41,7 +41,7 @@ export const NotificationService = {
 
     try {
       await transporter.sendMail({
-        from: '"Debt Intelligence" <alerts@debthelper.com>',
+        from: `"${process.env.ALERT_FROM_EMAIL || 'Debt Intelligence'}" <${process.env.ALERT_FROM_EMAIL || 'alerts@debthelper.com'}>`,
         to,
         subject,
         text,

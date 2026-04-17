@@ -15,7 +15,7 @@ const LINKS = [
   { name: 'Dashboard',  icon: LayoutDashboard, path: '/' },
   { name: 'My Debts',   icon: CreditCard,       path: '/debts' },
   { name: 'Strategy',   icon: Compass,           path: '/strategy' },
-  { name: 'Triggers',   icon: Zap,               path: '/triggers' },
+  { name: 'Tracker',    icon: Zap,               path: '/tracker' },
 
   { name: 'Settings',   icon: Settings,          path: '/settings' },
 ];

@@ -59,4 +59,33 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
   } catch (err: any) { res.status(500).json({ message: err.message }); }
 });
 
+// POST /debts/:id/pay
+router.post('/:id/pay', async (req: AuthRequest, res: Response) => {
+  try {
+    const debt = await prisma.debt.findFirst({
+      where: { id: req.params.id, userId: req.user!.sub },
+    });
+    
+    if (!debt) return res.status(404).json({ message: 'Debt not found' });
+
+    // Deduct EMI from outstanding. If balance goes negative, set it to 0.
+    const newOutstanding = Math.max(0, debt.outstanding - (debt.emiAmount || 0));
+    
+    // Advance due date by 1 month to naturally mute alerts
+    const newDueDate = new Date(debt.dueDate);
+    newDueDate.setMonth(newDueDate.getMonth() + 1);
+
+    const updated = await prisma.debt.update({
+      where: { id: debt.id },
+      data: {
+        outstanding: newOutstanding,
+        dueDate: newDueDate,
+        isActive: newOutstanding > 0, // Auto-close debt if paid off
+      }
+    });
+
+    res.json(updated);
+  } catch (err: any) { res.status(500).json({ message: err.message }); }
+});
+
 export default router;
