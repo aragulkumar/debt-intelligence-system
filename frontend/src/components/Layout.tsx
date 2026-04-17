@@ -28,7 +28,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const handleLogout = () => { logout(); navigate('/login'); };
 
   return (
-    <div className="flex flex-col h-full bg-sidebar text-sidebar-foreground">
+    <div className="flex flex-col h-full bg-sidebar/80 backdrop-blur-xl text-sidebar-foreground">
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-5">
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">

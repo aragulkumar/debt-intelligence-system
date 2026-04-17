@@ -64,8 +64,8 @@ export default function Dashboard() {
           <p className="text-muted-foreground">Here's your financial overview.</p>
         </div>
         <div className="flex items-center gap-3 p-4 rounded-xl border bg-card">
-          <div className="pulse-ring rounded-full">
-            <div className={`text-3xl font-bold ${bandColor}`}>{score}</div>
+          <div className="pulse-ring rounded-full bg-background/50 backdrop-blur-md p-1">
+            <div className={`text-4xl font-extrabold gradient-text bg-clip-text text-transparent`}>{score}</div>
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Health Score</p>
@@ -96,9 +96,9 @@ export default function Dashboard() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Debt</CardTitle>
             <div className="p-2 rounded-lg bg-indigo-500/10"><CreditCard className="w-4 h-4 text-indigo-500" /></div>
           </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">₹{totalOutstanding.toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground mt-1">{debts.length} active accounts</p>
+          <CardContent className="pt-2">
+            <p className="text-3xl font-bold tracking-tight">₹{totalOutstanding.toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground mt-2">{debts.length} active accounts</p>
           </CardContent>
         </Card>
 
@@ -107,9 +107,9 @@ export default function Dashboard() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Monthly EMI Load</CardTitle>
             <div className="p-2 rounded-lg bg-red-500/10"><TrendingDown className="w-4 h-4 text-red-500" /></div>
           </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">₹{totalEmi.toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground mt-1">Due next 30 days</p>
+          <CardContent className="pt-2">
+            <p className="text-3xl font-bold tracking-tight">₹{totalEmi.toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground mt-2">Due next 30 days</p>
           </CardContent>
         </Card>
 
@@ -118,9 +118,9 @@ export default function Dashboard() {
             <CardTitle className="text-sm font-medium text-muted-foreground">BNPL Accounts</CardTitle>
             <div className="p-2 rounded-lg bg-amber-500/10"><AlertTriangle className="w-4 h-4 text-amber-500" /></div>
           </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{bnplCount}</p>
-            <p className="text-xs text-muted-foreground mt-1">High frequency, low tenure</p>
+          <CardContent className="pt-2">
+            <p className="text-3xl font-bold tracking-tight">{bnplCount}</p>
+            <p className="text-xs text-muted-foreground mt-2">High frequency, low tenure</p>
           </CardContent>
         </Card>
       </div>
