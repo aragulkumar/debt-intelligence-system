@@ -14,7 +14,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Debts from './pages/Debts';
 import Strategy from './pages/Strategy';
-import Rules from './pages/Rules';
+import Triggers from './pages/Triggers';
 
 import Settings from './pages/Settings';
 import Admin from './pages/Admin';
@@ -39,7 +39,7 @@ function AppRoutes() {
       <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/debts" element={<ProtectedRoute><Debts /></ProtectedRoute>} />
       <Route path="/strategy" element={<ProtectedRoute><Strategy /></ProtectedRoute>} />
-      <Route path="/rules" element={<ProtectedRoute><Rules /></ProtectedRoute>} />
+      <Route path="/triggers" element={<ProtectedRoute><Triggers /></ProtectedRoute>} />
 
       <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />

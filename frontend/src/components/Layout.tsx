@@ -8,14 +8,14 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import {
   LayoutDashboard, CreditCard, Compass, ShieldAlert,
-  HeartPulse, Settings, LogOut, Sun, Moon, Menu, TrendingDown,
+  Settings, LogOut, Sun, Moon, Menu, TrendingDown, Zap
 } from 'lucide-react';
 
 const LINKS = [
   { name: 'Dashboard',  icon: LayoutDashboard, path: '/' },
   { name: 'My Debts',   icon: CreditCard,       path: '/debts' },
   { name: 'Strategy',   icon: Compass,           path: '/strategy' },
-  { name: 'Rules',      icon: ShieldAlert,       path: '/rules' },
+  { name: 'Triggers',   icon: Zap,               path: '/triggers' },
 
   { name: 'Settings',   icon: Settings,          path: '/settings' },
 ];
