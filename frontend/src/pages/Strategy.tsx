@@ -167,12 +167,12 @@ export default function Strategy() {
                             fontSize={10} 
                             tickLine={false} 
                             axisLine={false} 
-                            tickFormatter={(v) => \`₹\${v.toLocaleString()}\`} 
+                            tickFormatter={(v) => `₹${v.toLocaleString()}`} 
                           />
                           <Tooltip 
                             contentStyle={{ borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--card)' }}
                             labelStyle={{ color: 'var(--muted-foreground)' }}
-                            formatter={(value: number) => \`₹\${value.toLocaleString()}\`}
+                            formatter={(value: number) => `₹${value.toLocaleString()}`}
                           />
                           <Area type="monotone" dataKey="baseBalance" name="Min Pay Timeline" stroke="#ef4444" fillOpacity={1} fill="url(#colorBase)" />
                           <Area type="monotone" dataKey="optimizedBalance" name="Optimized Timeline" stroke="#22c55e" strokeWidth={2} fillOpacity={1} fill="url(#colorOpt)" />

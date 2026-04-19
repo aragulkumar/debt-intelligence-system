@@ -19,8 +19,14 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 // POST /debts
 router.post('/', async (req: AuthRequest, res: Response) => {
   try {
+    const data = { ...req.body, userId: req.user!.sub };
+    // If the frontend doesn't provide a principal amount, default it to the current outstanding balance.
+    if (data.principal === undefined) {
+      data.principal = data.outstanding;
+    }
+    
     const debt = await prisma.debt.create({
-      data: { ...req.body, userId: req.user!.sub },
+      data: data,
     });
     res.status(201).json(debt);
   } catch (err: any) { res.status(500).json({ message: err.message }); }

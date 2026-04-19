@@ -62,7 +62,8 @@ Return exactly this JSON structure (no code block, just raw JSON):
         if (!scoreData.score || !scoreData.band || !Array.isArray(scoreData.insights)) {
           throw new Error('Invalid Gemini response shape');
         }
-      } catch {
+      } catch (err: any) {
+        console.warn('[Gemini AI Fallback]', err.message);
         // Fallback if Gemini fails or returns bad JSON
         const fb = localScore(dti, emiR, avgRate, debts.length);
         scoreData = {

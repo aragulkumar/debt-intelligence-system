@@ -33,9 +33,9 @@ export default function Tracker() {
     const diffDays = Math.ceil((dDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
     
     if (diffDays < 0) return { label: 'Overdue!', color: 'destructive' };
-    if (diffDays <= 3) return { label: \`Due in \${diffDays} days\`, color: 'destructive' };
-    if (diffDays <= 7) return { label: \`Due in \${diffDays} days\`, color: 'amber-500' };
-    return { label: \`Due in \${diffDays} days\`, color: 'primary' };
+    if (diffDays <= 3) return { label: `Due in ${diffDays} days`, color: 'destructive' };
+    if (diffDays <= 7) return { label: `Due in ${diffDays} days`, color: 'amber-500' };
+    return { label: `Due in ${diffDays} days`, color: 'primary' };
   };
 
   return (
@@ -74,7 +74,7 @@ export default function Tracker() {
                       <div>
                         <p className="text-base font-semibold flex items-center gap-2">
                           {debt.name} 
-                          <span className={\`text-xs px-2 py-0.5 rounded-full bg-\${urgency.color}/10 text-\${urgency.color}\`}>
+                          <span className={`text-xs px-2 py-0.5 rounded-full bg-${urgency.color}/10 text-${urgency.color}`}>
                             {urgency.label}
                           </span>
                         </p>

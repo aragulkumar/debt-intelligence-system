@@ -100,7 +100,7 @@ router.post('/strategy', async (req: AuthRequest, res: Response) => {
       });
 
       projection.push({
-        month: \`Month \${month}\`,
+        month: `Month ${month}`,
         baseBalance: Math.round(baseTotal),
         optimizedBalance: Math.round(optTotal)
       });
